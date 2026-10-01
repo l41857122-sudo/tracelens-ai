@@ -17,7 +17,11 @@ export const metadata: Metadata = {
   description: "Turn raw application logs into an evidence-backed incident timeline, root-cause chain, and actionable postmortem.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"

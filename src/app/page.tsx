@@ -39,7 +39,7 @@ export default function Home() {
             <div className="preview-title">Database connection pool exhausted</div>
             <div className="preview-subtitle">High confidence <span>·</span> 4 supporting signals</div>
             <div className="preview-chain">
-              <div className="chain-item"><span className="chain-node red" /><span>DB pool at capacity <small>50 / 50 connections</small></span><b>12:04:03</b></div>
+              <div className="chain-item"><span className="chain-node primary" /><span>DB pool at capacity <small>50 / 50 connections</small></span><b>12:04:03</b></div>
               <div className="chain-link" />
               <div className="chain-item"><span className="chain-node amber" /><span>Upstream timeouts <small>Requests exceed 3s deadline</small></span><b>12:04:05</b></div>
               <div className="chain-link" />
