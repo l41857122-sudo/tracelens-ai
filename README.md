@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TraceLens
 
-## Getting Started
+TraceLens turns messy application logs into an incident timeline, recurring-error clusters, an evidence-backed root-cause chain, prioritized fixes, and an exportable postmortem. Its premium dark developer-tool interface includes a realistic end-to-end demo that works without an API key.
 
-First, run the development server:
+## Quick start
+
+Requirements: Node.js 20.9+ and npm. PostgreSQL is optional; the demo does not need a database.
 
 ```bash
+cd tracelens-ai
+npm install
+Copy-Item .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) and choose **Try the live demo** or **Open the workspace**. The dashboard loads realistic sample logs and deterministic incident analysis immediately: database connection exhaustion → slow queries → request timeouts → retry amplification → worker saturation → 5xx errors. Paste logs or upload `.log`, `.txt`, `.json`, or `.ndjson` files (up to 500 KB), then choose **Analyze logs**. Files are read in the browser, and the analysis runs on the server; no API key or database is required. Analyses are not saved unless `DATABASE_URL` is configured. Postmortems can be copied as Markdown or exported to a `.md` file.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Optional AI analysis
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+In `.env.local`, configure an OpenAI-compatible Chat Completions endpoint:
 
-## Learn More
+```dotenv
+OPENAI_API_KEY=your-key
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_MODEL=gpt-4o-mini
+```
 
-To learn more about Next.js, take a look at the following resources:
+Restart the dev server after changing environment variables. The API key stays server-side. When configured, analysis requests are sent to that provider for a structured JSON response validated with Zod. Provider failures are surfaced explicitly rather than silently replaced with demo results. **AI inference and observations quoted from logs are displayed separately.**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## PostgreSQL / Prisma
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The demo does not require PostgreSQL. To retain analysis history, set `DATABASE_URL` in `.env.local`, then initialize the schema:
 
-## Deploy on Vercel
+```bash
+npx prisma migrate dev --name init
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+When configured, completed analyses are saved in PostgreSQL and can be reopened from the dashboard. Stored records include submitted logs and their structured analysis. Protect database-backed deployments with authentication and review log-retention/privacy requirements before storing production logs; this MVP does not include user authentication or log redaction.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Commands
+
+```bash
+npm run dev         # local development server
+npm run lint        # ESLint
+npm run typecheck   # TypeScript
+npm test            # parsing and deterministic analysis tests
+npm run build       # optimized production build
+```
+
+## Stack
+
+Next.js App Router, React, TypeScript, Tailwind CSS, shadcn-inspired accessible components, Lucide icons, Zod-validated API and AI responses, Prisma with PostgreSQL, and any OpenAI-compatible chat-completions provider. Without an API key, the deterministic demo works offline.
+
+## Privacy and scope
+
+The deterministic analyzer does not retain logs unless PostgreSQL persistence is enabled. Only configure an AI provider if it is acceptable for that provider to receive submitted logs. Protect the analysis API and incident-history endpoint with authentication before deploying a database-backed instance to a public network; the demo workspace has no account system or user isolation.
